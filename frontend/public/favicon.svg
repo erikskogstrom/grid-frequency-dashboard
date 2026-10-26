@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .line { stroke: #12171c; }
+    .ref { stroke: #12171c; opacity: .35; }
+    @media (prefers-color-scheme: dark) { .line { stroke: #e9eef3; } .ref { stroke: #e9eef3; } }
+  </style>
+  <line class="ref" x1="2" y1="11" x2="30" y2="11" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 4"/>
+  <path class="line" d="M2 11h8l3 14 4-9 3 -5h10" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

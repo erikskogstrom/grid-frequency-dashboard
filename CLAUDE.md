@@ -10,13 +10,13 @@ The repo is at an early stage. `frontend/` is the freshly generated Angular app 
 
 ## Frontend commands
 
-Run from `frontend/` (npm 11, Vitest via the Angular builder, Tailwind CSS v4 through PostCSS):
+Run from `frontend/` (pnpm 12, Vitest via the Angular builder, Tailwind CSS v4 through PostCSS):
 
-- `npm start` — dev server (`ng serve`)
-- `npm run build` — production build
-- `npm run watch` — development build in watch mode
-- `npm test` — unit tests (`ng test`, Vitest + jsdom)
-- `npx ng test --include src/app/app.spec.ts` — run a single spec file
+- `pnpm start` — dev server (`ng serve`)
+- `pnpm build` — production build
+- `pnpm watch` — development build in watch mode
+- `pnpm test` — unit tests (`ng test`, Vitest + jsdom)
+- `pnpm exec ng test --include src/app/app.spec.ts` — run a single spec file
 
 There is no lint script configured; formatting is Prettier (`frontend/.prettierrc`).
 
@@ -30,4 +30,4 @@ There is no lint script configured; formatting is Prettier (`frontend/.prettierr
 - Use signals, `input()`/`output()`, native control flow and `inject()`.
 - Output must pass AXE checks and WCAG AA.
 
-`.mcp.json` (repo root, so it loads when Claude Code starts here) registers the Angular CLI MCP server (`npx @angular/cli mcp`) for Angular docs and tooling.
+`.mcp.json` (repo root, so it loads when Claude Code starts here) registers the Angular CLI MCP server (`pnpm dlx @angular/cli mcp`) for Angular docs and tooling.

@@ -53,6 +53,20 @@ describe('FrequencyGauge', () => {
     expect(el.textContent).toContain('No live data');
   });
 
+  it('shows which way the frequency is heading', async () => {
+    const falling = Array.from({ length: 60 }, (_, i) => sample(50 - i * 0.002));
+    stream.recent.set(falling);
+    stream.latest.set(falling[59]);
+    const el = await render();
+    expect(el.textContent).toContain('Falling');
+    expect(el.textContent).toContain('−40 mHz / 10 s');
+  });
+
+  it('shows the deviation from nominal in mHz', async () => {
+    stream.latest.set(sample(49.977));
+    expect((await render()).textContent).toContain('−23 mHz from 50.00 Hz');
+  });
+
   it('uses the thresholds from AlarmSettings', async () => {
     stream.latest.set(sample(49.95));
     TestBed.inject(AlarmSettings).apply({ low: 49.98, high: 50.02 });

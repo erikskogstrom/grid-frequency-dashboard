@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T22:55:36+00:00",
+  "title": "Design System: Grid Frequency Dashboard",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "primary",
+        "displayName": "Ink",
+        "canonical": "#12171c",
+        "tonalRamp": [
+          "#040607",
+          "#080a0d",
+          "#0c0f12",
+          "#0f1418",
+          "#414549",
+          "#717477",
+          "#acaeb0",
+          "#dbdcdd"
+        ]
+      },
+      "page": {
+        "role": "neutral",
+        "displayName": "Page",
+        "canonical": "#f4f6f8",
+        "tonalRamp": [
+          "#3d3e3e",
+          "#6e6f70",
+          "#9fa0a1",
+          "#cfd1d3",
+          "#f6f8f9",
+          "#f8fafb",
+          "#fbfcfd",
+          "#fdfefe"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#404040",
+          "#737373",
+          "#a6a6a6",
+          "#d9d9d9",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#515c68",
+        "tonalRamp": [
+          "#14171a",
+          "#24292f",
+          "#353c44",
+          "#454e58",
+          "#747d86",
+          "#979da4",
+          "#c2c6ca",
+          "#e5e7e8"
+        ]
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "Normal green",
+        "canonical": "#17733f",
+        "tonalRamp": [
+          "#061d10",
+          "#0a341c",
+          "#0f4b29",
+          "#146236",
+          "#458f65",
+          "#74ab8c",
+          "#aecebc",
+          "#dceae2"
+        ]
+      },
+      "warn": {
+        "role": "status",
+        "displayName": "Warning amber",
+        "canonical": "#8a5200",
+        "tonalRamp": [
+          "#221400",
+          "#3e2500",
+          "#5a3500",
+          "#754600",
+          "#a17533",
+          "#b99766",
+          "#d6c2a6",
+          "#ede5d9"
+        ]
+      },
+      "crit": {
+        "role": "status",
+        "displayName": "Critical red",
+        "canonical": "#b3261e",
+        "tonalRamp": [
+          "#2d0a08",
+          "#51110e",
+          "#741914",
+          "#98201a",
+          "#c2514b",
+          "#d17d78",
+          "#e4b3b0",
+          "#f4dedd"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "value": {
+        "displayName": "Value",
+        "purpose": "The current frequency, the largest element on the page."
+      },
+      "status": {
+        "displayName": "Status",
+        "purpose": "Status and trend words in the status band."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chart axis and reference labels, tabular numerals."
+      }
+    },
+    "motion": [
+      {
+        "name": "status-tint",
+        "value": "colors 300ms, none under prefers-reduced-motion",
+        "purpose": "The status band tint changing when the status changes."
+      },
+      {
+        "name": "control-state",
+        "value": "colors 150ms",
+        "purpose": "Hover and active states on buttons."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Applies a form; neutral ink on surface.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Apply thresholds</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 16px;border-radius:6px;font:500 14px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background-color .15s} .ds-btn-primary{background:#12171c;color:#fff;border:0} .ds-btn-primary:hover{background:rgba(18,23,28,.85)} .ds-btn-primary:focus-visible,.ds-btn-secondary:focus-visible,.ds-field:focus-visible{outline:2px solid #12171c;outline-offset:2px} .ds-btn-secondary{background:transparent;color:#12171c;border:1px solid #74808c} .ds-btn-secondary:hover{background:rgba(18,23,28,.05)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary actions such as Trigger disturbance and the time range.",
+      "html": "<button class=\"ds-btn ds-btn-secondary\">Trigger disturbance</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 16px;border-radius:6px;font:500 14px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background-color .15s} .ds-btn-primary{background:#12171c;color:#fff;border:0} .ds-btn-primary:hover{background:rgba(18,23,28,.85)} .ds-btn-primary:focus-visible,.ds-btn-secondary:focus-visible,.ds-field:focus-visible{outline:2px solid #12171c;outline-offset:2px} .ds-btn-secondary{background:transparent;color:#12171c;border:1px solid #74808c} .ds-btn-secondary:hover{background:rgba(18,23,28,.05)}"
+    },
+    {
+      "name": "Number Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Threshold input; sunken, edge border.",
+      "html": "<input class=\"ds-field\" type=\"number\" value=\"49.90\" aria-label=\"Low threshold\">",
+      "css": ".ds-field{height:40px;width:160px;padding:0 12px;border-radius:6px;border:1px solid #74808c;background:#eef1f4;color:#12171c;font:14px ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums} .ds-field:focus-visible{outline:2px solid #12171c;outline-offset:2px}"
+    },
+    {
+      "name": "Status Band (critical)",
+      "kind": "custom",
+      "refersTo": "status-band-critical",
+      "description": "Value, status shape and label; tints when not normal.",
+      "html": "<section class=\"ds-band\"><p class=\"ds-value\">49.45<span> Hz</span></p><p class=\"ds-status\"><svg viewBox=\"0 0 24 24\" width=\"32\" height=\"32\" aria-hidden=\"true\"><path d=\"M8.2 2.5h7.6l5.7 5.7v7.6l-5.7 5.7H8.2L2.5 15.8V8.2z\" fill=\"currentColor\"/><path d=\"M12 7v6.5M12 16.8v.01\" stroke=\"#fff\" stroke-width=\"2\" stroke-linecap=\"round\" fill=\"none\"/></svg>Critical</p></section>",
+      "css": ".ds-band{display:flex;justify-content:space-between;align-items:center;padding:28px 32px;border:1px solid #b3261e;border-radius:12px;background:rgba(179,38,30,.1);color:#12171c;font-family:ui-sans-serif,system-ui,sans-serif} .ds-value{margin:0;font-size:96px;line-height:1;font-weight:600;font-variant-numeric:tabular-nums} .ds-value span{font-size:24px;font-weight:400;color:#515c68} .ds-status{display:flex;align-items:center;gap:12px;margin:0;font-size:24px;font-weight:600;color:#b3261e}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Signboard",
+    "overview": "The page behaves like good signage: the one number that matters is the largest thing on it, status is a shape plus a word, and everything else stays out of the way until something is wrong. Neutral and low-glare in light and dark, in the system sans with tabular numerals. Colour is never decoration.",
+    "keyCharacteristics": [
+      "One framed surface (the status band); everything else is plain sections divided by hairlines.",
+      "Status is always shape plus text plus colour.",
+      "Neutral controls; no brand accent.",
+      "Chart reference lines carry the meaning.",
+      "Stale data is visibly dimmed, with the last-sample time shown."
+    ],
+    "rules": [
+      {
+        "name": "The Meaning-Only Colour Rule",
+        "body": "Green, amber and red appear only where they state a status or a limit.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Colour-Alone Rule",
+        "body": "Every status colour is paired with a text label and, for frequency status, a distinct shape.",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet-Normal Rule",
+        "body": "Normal is neutral surface with ink text; only the small status label and icon carry green.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every value that updates uses tabular numerals.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "No box shadows. A surface is either a hairline-bordered panel or part of the page.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep status as shape plus text plus colour.",
+      "Do use the theme tokens rather than raw palette colours.",
+      "Do use tabular numerals for every changing value.",
+      "Do make stale or disconnected data look stale.",
+      "Do keep motion to short state transitions and respect prefers-reduced-motion."
+    ],
+    "donts": [
+      "Don't add an accent colour, gradients, glass effects, shadows or decorative illustrations.",
+      "Don't convey status with colour alone.",
+      "Don't animate on every sample or flash on change.",
+      "Don't turn the page into a grid of identical cards."
+    ]
+  }
+}

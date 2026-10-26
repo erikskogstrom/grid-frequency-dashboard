@@ -14,7 +14,7 @@ import { FrequencySample } from '../frequency-sample';
           @for (option of options; track option) {
             <button
               type="button"
-              class="btn btn-secondary h-9 px-3 aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-ink"
+              class="btn btn-secondary h-9 px-3 aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-panel"
               [attr.aria-pressed]="minutes() === option"
               (click)="minutes.set(option)"
             >

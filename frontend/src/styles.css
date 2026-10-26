@@ -1,37 +1,63 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. A dark "control room" palette: cool-tinted neutrals, one accent (sky) for the data
- * line and primary actions, and a status trio that always comes with a text label.
- * Contrast (checked): muted on panel 7.5:1, edge on panel 3.6:1 (control borders need 3:1).
+ * Design tokens. Neutral, low-glare surfaces in light and dark (following the system).
+ * Colour is reserved for meaning: ok / warn / crit are the frequency status and the normal band.
+ * There is no brand accent; controls are ink on surface.
+ * Contrast (checked, AA): muted on page 6.2:1 light / 7.2:1 dark; status colours on panel >= 5.8:1;
+ * edge (control borders) on panel >= 3.9:1.
  */
-@theme {
-  --color-page: #0b1117;
-  --color-panel: #111a22;
-  --color-sunken: #0a1016;
-  --color-line: #263544; /* decorative dividers */
-  --color-edge: #5d7387; /* borders of controls */
-  --color-ink: #e8eef4;
-  --color-muted: #9aabbb;
-  --color-ok: #4ade80;
-  --color-warn: #fbbf24;
-  --color-crit: #f87171;
-  --color-accent: #38bdf8;
-  --color-accent-ink: #04202e;
+:root {
+  color-scheme: light dark;
+  --page: #f4f6f8;
+  --panel: #ffffff;
+  --sunken: #eef1f4;
+  --line: #d8dee5;
+  --edge: #74808c;
+  --ink: #12171c;
+  --muted: #515c68;
+  --ok: #17733f;
+  --warn: #8a5200;
+  --crit: #b3261e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0d1014;
+    --panel: #141a20;
+    --sunken: #0a0e12;
+    --line: #27313b;
+    --edge: #66798c;
+    --ink: #e9eef3;
+    --muted: #9aa6b2;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --crit: #ff7b72;
+  }
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-panel: var(--panel);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-edge: var(--edge);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-crit: var(--crit);
 }
 
 @layer base {
-  html {
-    color-scheme: dark; /* dark number-input spinners, scrollbars and form controls */
-  }
   body {
     @apply bg-page text-ink antialiased;
   }
   ::selection {
-    background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+    background: color-mix(in oklab, var(--ink) 22%, transparent);
   }
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--ink);
     outline-offset: 2px;
   }
 }
@@ -39,16 +65,13 @@
 /* One vocabulary for controls, shared by every component. */
 @layer components {
   .btn {
-    @apply inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply bg-accent text-accent-ink hover:bg-sky-300 active:bg-sky-500;
+    @apply bg-ink text-panel hover:bg-ink/85 active:bg-ink/70;
   }
   .btn-secondary {
-    @apply border border-edge text-ink hover:bg-white/5 active:bg-white/10;
-  }
-  .btn-danger {
-    @apply border border-crit/60 text-crit hover:bg-crit/10 active:bg-crit/20;
+    @apply border border-edge text-ink hover:bg-ink/5 active:bg-ink/10;
   }
   .field {
     @apply h-10 w-full rounded-md border border-edge bg-sunken px-3 text-ink tabular-nums aria-invalid:border-crit;

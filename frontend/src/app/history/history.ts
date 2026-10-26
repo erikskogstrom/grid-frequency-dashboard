@@ -1,8 +1,8 @@
 import { httpResource } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { AlarmSettings } from '../alarm-settings';
-import { formatClock } from '../format-time';
-import { FrequencySample } from '../frequency-sample';
+import { formatClock, formatDuration } from '../format-time';
+import { FrequencySample, SAMPLE_INTERVAL_SECONDS } from '../frequency-sample';
 
 const REFRESH_MS = 10_000;
 
@@ -51,7 +51,7 @@ const REFRESH_MS = 10_000;
             <div><dt class="text-sm text-muted">Mean</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.mean.toFixed(2) }} <span class="text-sm font-normal text-muted">Hz</span></dd></div>
             <div>
               <dt class="text-sm text-muted">Outside normal band</dt>
-              <dd class="mt-1 text-xl font-semibold tabular-nums" [class.text-warn]="s.outside > 0">{{ s.outside }}</dd>
+              <dd class="mt-1 text-xl font-semibold tabular-nums" [class.text-warn]="s.outside > 0">{{ s.outsideTime }}</dd>
             </div>
           </dl>
           <p class="mt-5 text-sm text-muted tabular-nums">Data up to {{ s.asOf }}, refreshed every 10 s</p>
@@ -91,12 +91,14 @@ export class History {
       return null;
     }
     const { low, high } = this.thresholds();
+    const outside = hz.filter((value) => value < low || value > high).length;
     return {
       count: hz.length,
       min: Math.min(...hz),
       max: Math.max(...hz),
       mean: hz.reduce((sum, value) => sum + value, 0) / hz.length,
-      outside: hz.filter((value) => value < low || value > high).length,
+      outside,
+      outsideTime: formatDuration(outside * SAMPLE_INTERVAL_SECONDS),
       asOf: formatClock(samples[samples.length - 1].timestamp),
     };
   });

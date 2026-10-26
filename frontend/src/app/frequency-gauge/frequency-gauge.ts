@@ -64,7 +64,7 @@ const signed = (mHz: number) => `${mHz < 0 ? '−' : '+'}${Math.abs(mHz)}`;
                 </span>
               </dd>
             } @else {
-              <dd class="mt-2 text-2xl font-semibold text-muted">Collecting data</dd>
+              <dd class="mt-2 text-base text-muted">Needs about 15 s of data</dd>
             }
           </div>
         </dl>

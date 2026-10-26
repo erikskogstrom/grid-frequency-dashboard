@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/aspire/">
+    <Project Path="aspire/GridFrequency.AppHost/GridFrequency.AppHost.csproj" />
+    <Project Path="aspire/GridFrequency.ServiceDefaults/GridFrequency.ServiceDefaults.csproj" />
+  </Folder>
   <Folder Name="/backend/">
     <Project Path="backend/GridFrequency.Api.Tests/GridFrequency.Api.Tests.csproj" />
     <Project Path="backend/GridFrequency.Api/GridFrequency.Api.csproj" />

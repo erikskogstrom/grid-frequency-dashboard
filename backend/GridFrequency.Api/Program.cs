@@ -2,6 +2,8 @@ using GridFrequency.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults(); // OpenTelemetry (logs, traces, metrics), health checks, service discovery
+
 builder.Services.AddSignalR();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<FrequencySimulator>();
@@ -9,6 +11,8 @@ builder.Services.AddSingleton<SampleBuffer>();
 builder.Services.AddHostedService<SimulationWorker>();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.MapHub<FrequencyHub>("/hubs/frequency");
 

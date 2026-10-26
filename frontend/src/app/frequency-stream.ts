@@ -1,6 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { DestroyRef, Service, inject, signal } from '@angular/core';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { firstValueFrom } from 'rxjs';
 import { FrequencySample } from './frequency-sample';
+import { mergeSamples } from './merge-samples';
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -15,6 +18,7 @@ export class FrequencyStream {
   private readonly _latest = signal<FrequencySample | null>(null);
   private readonly _recent = signal<readonly FrequencySample[]>([]);
   private readonly _status = signal<ConnectionStatus>('connecting');
+  private readonly http = inject(HttpClient);
   private stopped = false;
 
   readonly latest = this._latest.asReadonly();
@@ -33,7 +37,10 @@ export class FrequencyStream {
       this._recent.update((recent) => [...recent.slice(-(RECENT_SAMPLE_COUNT - 1)), sample]);
     });
     this.connection.onreconnecting(() => this._status.set('reconnecting'));
-    this.connection.onreconnected(() => this._status.set('connected'));
+    this.connection.onreconnected(() => {
+      this._status.set('connected');
+      void this.backfill();
+    });
     // Automatic reconnect gives up after a few attempts; then we start over ourselves.
     this.connection.onclose(() => {
       this._status.set('disconnected');
@@ -48,6 +55,22 @@ export class FrequencyStream {
     void this.start();
   }
 
+  /**
+   * Loads the last two minutes from the backend so a page load (or a reconnect after a gap) does not
+   * start with an empty chart and trend. Merged with the live samples, de-duplicated by timestamp.
+   */
+  private async backfill(): Promise<void> {
+    try {
+      const history = await firstValueFrom(
+        this.http.get<FrequencySample[]>('/api/history', { params: { minutes: 2 } }),
+      );
+      this._recent.update((recent) => mergeSamples(recent, history, RECENT_SAMPLE_COUNT));
+      this._latest.update((latest) => latest ?? this._recent().at(-1) ?? null);
+    } catch {
+      // Not critical: the chart simply fills from live samples.
+    }
+  }
+
   /** Retries until the first connection succeeds (automatic reconnect only covers lost connections). */
   private async start(): Promise<void> {
     while (!this.stopped) {
@@ -55,6 +78,7 @@ export class FrequencyStream {
         this._status.set('connecting');
         await this.connection.start();
         this._status.set('connected');
+        void this.backfill();
         return;
       } catch {
         this._status.set('disconnected');

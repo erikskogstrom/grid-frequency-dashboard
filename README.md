@@ -2,7 +2,7 @@
 
 Real-time dashboard for the grid frequency of the Nordic synchronous area (nominal 50 Hz), built with Angular 22 and .NET 10, using SignalR.
 
-> **The data is simulated.** The backend generates a mean-reverting random walk around 50 Hz, and you can trigger a disturbance (sudden generation loss) from the UI. No real grid data is used.
+> **The data is simulated.** The backend generates a mean-reverting random walk around 50 Hz, and you can trigger a disturbance (sudden generation loss, down to about 49.4 Hz) from the UI. No real grid data is used.
 
 ## Structure
 

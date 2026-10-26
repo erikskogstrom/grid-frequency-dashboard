@@ -29,7 +29,9 @@ There is no lint script configured; formatting is Prettier (`frontend/.prettierr
 
 `frontend/proxy.conf.js` proxies `/api` and `/hubs` to the API: `API_HTTPS`/`API_HTTP` (set by Aspire), else `http://localhost:5121`. The `start` script passes `PORT` to `ng serve --port` (default 4200).
 
-Styling: design tokens live in `frontend/src/styles.css` (`@theme`) together with the shared `.btn`/`.field` classes. Use the tokens (`bg-panel`, `text-muted`, `text-ok`, ...) rather than raw Tailwind colors.
+Product and design context: `PRODUCT.md` (domain rules, tone, accessibility) and `DESIGN.md` (the design system) at the repo root. The domain rules there are authoritative: normal band 49.90–50.10 Hz by default, Critical below 49.50 / above 50.50 Hz (`frequency-status.ts`).
+
+Styling: design tokens are CSS variables in `frontend/src/styles.css` (light and dark, following the system) mapped to Tailwind with `@theme inline`, together with the shared `.btn`/`.field` classes. Use the tokens (`bg-panel`, `text-muted`, `text-ok`, ...) rather than raw Tailwind colors. Colour is reserved for status and the normal band; there is no accent colour.
 
 ## Conventions
 

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/GridFrequency.Api.Tests/GridFrequency.Api.Tests.csproj" />
+    <Project Path="backend/GridFrequency.Api/GridFrequency.Api.csproj" />
+  </Folder>
+</Solution>

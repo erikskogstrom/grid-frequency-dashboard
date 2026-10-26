@@ -1,12 +1,9 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { Dashboard } from './dashboard/dashboard';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
-  templateUrl: './app.html',
+  imports: [Dashboard],
+  template: '<app-dashboard />',
 })
-export class App {
-  protected readonly title = signal('grid-frequency-dashboard');
-}
+export class App {}

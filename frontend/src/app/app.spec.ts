@@ -1,24 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { FakeFrequencyStream } from '../testing/fake-frequency-stream';
 import { App } from './app';
+import { FrequencyStream } from './frequency-stream';
 
 describe('App', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [App],
-    })
-      .compileComponents();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: FrequencyStream, useClass: FakeFrequencyStream }],
+    });
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it('should render title', async () => {
+  it('renders the dashboard', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, grid-frequency-dashboard');
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('h1')?.textContent).toContain('Nordic grid frequency');
+    expect(el.querySelector('app-frequency-gauge')).not.toBeNull();
   });
 });

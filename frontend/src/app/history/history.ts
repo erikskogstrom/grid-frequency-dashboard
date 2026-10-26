@@ -1,7 +1,10 @@
 import { httpResource } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { AlarmSettings } from '../alarm-settings';
+import { formatClock } from '../format-time';
 import { FrequencySample } from '../frequency-sample';
+
+const REFRESH_MS = 10_000;
 
 @Component({
   selector: 'app-history',
@@ -25,7 +28,7 @@ import { FrequencySample } from '../frequency-sample';
       </div>
 
       <div class="mt-5 min-h-24" aria-live="polite">
-        @if (history.isLoading()) {
+        @if (history.status() === 'loading') {
           <!-- Skeleton with the same shape as the result, so nothing jumps when data arrives. -->
           <div class="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-5" aria-label="Loading history" role="status">
             @for (n of [1, 2, 3, 4, 5]; track n) {
@@ -47,10 +50,11 @@ import { FrequencySample } from '../frequency-sample';
             <div><dt class="text-sm text-muted">Max</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.max.toFixed(2) }} <span class="text-sm font-normal text-muted">Hz</span></dd></div>
             <div><dt class="text-sm text-muted">Mean</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.mean.toFixed(2) }} <span class="text-sm font-normal text-muted">Hz</span></dd></div>
             <div>
-              <dt class="text-sm text-muted">Outside band</dt>
+              <dt class="text-sm text-muted">Outside normal band</dt>
               <dd class="mt-1 text-xl font-semibold tabular-nums" [class.text-warn]="s.outside > 0">{{ s.outside }}</dd>
             </div>
           </dl>
+          <p class="mt-5 text-sm text-muted tabular-nums">Data up to {{ s.asOf }}, refreshed every 10 s</p>
         } @else {
           <p class="text-sm text-muted">No samples in this range yet. The backend keeps up to 15 minutes, so give it a moment after a restart.</p>
         }
@@ -70,12 +74,19 @@ export class History {
     params: { minutes: this.minutes() },
   }));
 
+  constructor() {
+    // Keep the numbers fresh. reload() keeps the old value visible while it runs (status 'reloading').
+    const timer = setInterval(() => this.history.reload(), REFRESH_MS);
+    inject(DestroyRef).onDestroy(() => clearInterval(timer));
+  }
+
   protected readonly stats = computed(() => {
     // value() throws while the resource is in the error state, so guard it.
     if (!this.history.hasValue()) {
       return null;
     }
-    const hz = this.history.value().map((sample) => sample.hz);
+    const samples = this.history.value();
+    const hz = samples.map((sample) => sample.hz);
     if (hz.length === 0) {
       return null;
     }
@@ -86,6 +97,7 @@ export class History {
       max: Math.max(...hz),
       mean: hz.reduce((sum, value) => sum + value, 0) / hz.length,
       outside: hz.filter((value) => value < low || value > high).length,
+      asOf: formatClock(samples[samples.length - 1].timestamp),
     };
   });
 }

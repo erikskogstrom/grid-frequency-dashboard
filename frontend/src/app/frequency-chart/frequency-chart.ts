@@ -2,11 +2,14 @@ import { Component, computed, inject } from '@angular/core';
 import { AlarmSettings } from '../alarm-settings';
 import { formatClock } from '../format-time';
 import { FrequencyStream } from '../frequency-stream';
-import { CRITICAL_HIGH_HZ, CRITICAL_LOW_HZ, NOMINAL_HZ, getFrequencyStatus } from '../frequency-status';
+import { CRITICAL_HIGH_HZ, CRITICAL_LOW_HZ, FrequencyStatus, NOMINAL_HZ, findLastStatusChange, getFrequencyStatus } from '../frequency-status';
 
+const STATUS_LABEL: Record<FrequencyStatus, string> = { normal: 'Normal', outside: 'Outside normal band', critical: 'Critical' };
 const WINDOW_MS = 120_000;
 const Y_MIN = 49.3;
 const Y_MAX = 50.7;
+/** Minimum vertical gap between two reference labels, in percent of the plot height (about 14px at 288px). */
+const LABEL_MIN_GAP_PERCENT = 5;
 const GRID_HZ = [50.6, 50.4, 50.2, 50.0, 49.8, 49.6, 49.4];
 
 /** Maps a frequency to a vertical position in percent (0 = top, 100 = bottom), clamped to the plot. */
@@ -24,7 +27,11 @@ function yPercent(hz: number): number {
   selector: 'app-frequency-chart',
   template: `
     <section aria-labelledby="chart-title">
-      <h2 id="chart-title" class="text-base font-semibold">Last 2 minutes</h2>
+      <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <h2 id="chart-title" class="text-base font-semibold">Last 2 minutes</h2>
+        <!-- Slot for controls that act on the chart, so cause and effect are visible together. -->
+        <ng-content />
+      </div>
 
       <div class="mt-4 grid grid-cols-[2.25rem_1fr_2.75rem] gap-x-3 sm:grid-cols-[2.25rem_1fr_7rem]">
         <div class="relative" aria-hidden="true">
@@ -47,10 +54,20 @@ function yPercent(hz: number): number {
               <line x1="0" x2="100" [attr.y1]="ref.y" [attr.y2]="ref.y" [class]="ref.line" [attr.stroke-dasharray]="ref.dash" stroke-width="1.5" vector-effect="non-scaling-stroke" />
             }
 
+            @if (change(); as c) {
+              <line [attr.x1]="c.x" [attr.x2]="c.x" y1="0" y2="100" class="stroke-muted" stroke-dasharray="2 3" vector-effect="non-scaling-stroke" />
+            }
+
             @if (path()) {
               <path [attr.d]="path()" fill="none" class="stroke-ink" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
             }
           </svg>
+
+          @if (change(); as c) {
+            <span class="absolute top-1 bg-page px-1 text-xs whitespace-nowrap text-muted tabular-nums" [class.-translate-x-full]="c.x > 65" [style.left.%]="c.x">
+              {{ c.label }} from {{ c.time }}
+            </span>
+          }
 
           @if (marker(); as m) {
             <span class="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-4 ring-page" [class]="live() ? m.color : 'bg-muted'" [style.left.%]="m.x" [style.top.%]="m.y"></span>
@@ -61,9 +78,11 @@ function yPercent(hz: number): number {
 
         <div class="relative" aria-hidden="true">
           @for (ref of references(); track ref.name + ref.hz) {
-            <span class="absolute left-0 -translate-y-1/2 text-xs whitespace-nowrap tabular-nums" [class]="ref.text" [style.top.%]="ref.y">
-              {{ ref.hz.toFixed(2) }}<span class="hidden sm:inline"> {{ ref.name }}</span>
-            </span>
+            @if (!ref.hidden) {
+              <span class="absolute left-0 -translate-y-1/2 text-xs whitespace-nowrap tabular-nums" [class]="ref.text" [style.top.%]="ref.y">
+                {{ ref.hz.toFixed(2) }}<span class="hidden sm:inline"> {{ ref.name }}</span>
+              </span>
+            }
           }
         </div>
 
@@ -98,13 +117,16 @@ export class FrequencyChart {
     const { low, high } = this.thresholds();
     const band = { line: 'stroke-ok', text: 'text-ok', dash: '6 4' };
     const critical = { line: 'stroke-crit', text: 'text-crit', dash: '2 4' };
-    return [
+    const lines = [
       { hz: CRITICAL_HIGH_HZ, name: 'critical', ...critical },
       { hz: high, name: 'high', ...band },
       { hz: NOMINAL_HZ, name: 'nominal', line: 'stroke-ink', text: 'text-ink', dash: '' },
       { hz: low, name: 'low', ...band },
       { hz: CRITICAL_LOW_HZ, name: 'critical', ...critical },
     ].map((ref) => ({ ...ref, y: yPercent(ref.hz) }));
+    // Labels are about 16px tall; hide a threshold label that would collide with the nominal one (the line stays).
+    const nominalY = yPercent(NOMINAL_HZ);
+    return lines.map((ref) => ({ ...ref, hidden: ref.name !== 'nominal' && Math.abs(ref.y - nominalY) < LABEL_MIN_GAP_PERCENT }));
   });
 
   /** Points as [x%, y%]. The newest sample is always at the right edge, so the line scrolls left. */
@@ -127,6 +149,17 @@ export class FrequencyChart {
       return '';
     }
     return points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+  });
+
+  /** When the status last changed within the window: x position, new status and clock time. */
+  protected readonly change = computed(() => {
+    const samples = this.recent();
+    const found = findLastStatusChange(samples, this.thresholds());
+    const point = found ? this.points()[found.index] : null;
+    if (!found || !point) {
+      return null;
+    }
+    return { x: point.x, label: STATUS_LABEL[found.status], time: formatClock(samples[found.index].timestamp) };
   });
 
   /** End-of-line marker, coloured by the status of the latest sample. */

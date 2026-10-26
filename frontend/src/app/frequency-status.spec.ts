@@ -1,4 +1,4 @@
-import { getFrequencyStatus } from './frequency-status';
+import { findLastStatusChange, getFrequencyStatus } from './frequency-status';
 
 describe('getFrequencyStatus', () => {
   const thresholds = { low: 49.9, high: 50.1 };
@@ -21,5 +21,23 @@ describe('getFrequencyStatus', () => {
 
   it('critical wins over a wide alarm band', () => {
     expect(getFrequencyStatus(49.4, { low: 49.0, high: 51.0 })).toBe('critical');
+  });
+});
+
+describe('findLastStatusChange', () => {
+  const thresholds = { low: 49.9, high: 50.1 };
+  const at = (...hz: number[]) => hz.map((value) => ({ hz: value }));
+
+  it('is null when the status never changed', () => {
+    expect(findLastStatusChange(at(50, 50.02, 49.98), thresholds)).toBeNull();
+    expect(findLastStatusChange([], thresholds)).toBeNull();
+  });
+
+  it('finds where the current status began', () => {
+    expect(findLastStatusChange(at(50, 50, 49.8, 49.7, 49.6), thresholds)).toEqual({ index: 2, status: 'outside' });
+  });
+
+  it('reports the latest change only', () => {
+    expect(findLastStatusChange(at(50, 49.8, 49.4, 49.45), thresholds)).toEqual({ index: 2, status: 'critical' });
   });
 });

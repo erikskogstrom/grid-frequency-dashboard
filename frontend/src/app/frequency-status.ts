@@ -21,3 +21,21 @@ export function getFrequencyStatus(hz: number, thresholds: Thresholds): Frequenc
   }
   return 'normal';
 }
+
+export interface StatusChange {
+  /** Index of the first sample with the new status. */
+  index: number;
+  status: FrequencyStatus;
+}
+
+/** The most recent moment the status changed, or null when it never changed in the given samples. */
+export function findLastStatusChange(samples: readonly { hz: number }[], thresholds: Thresholds): StatusChange | null {
+  let next = samples.length > 0 ? getFrequencyStatus(samples[samples.length - 1].hz, thresholds) : null;
+  for (let i = samples.length - 2; i >= 0 && next !== null; i--) {
+    const status = getFrequencyStatus(samples[i].hz, thresholds);
+    if (status !== next) {
+      return { index: i + 1, status: next };
+    }
+  }
+  return null;
+}

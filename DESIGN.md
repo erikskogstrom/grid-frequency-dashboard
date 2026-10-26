@@ -189,7 +189,7 @@ Soft but restrained: 12px on the one large framed surface (the status band), 6px
 The single framed surface. A 12px-radius, 1px-bordered panel: value and deviation on the left, status (shape plus label) and trend (arrow, word, mHz per 10 s) on the right. Warn and critical tint the band with 10% of the status colour and set its border to the full colour. Colour changes over 300 ms (none under reduced motion).
 
 ### Chart
-Inline SVG drawn from signals, stretched to its box with non-scaling strokes; text and the end marker are HTML so they stay readable. Reference lines: nominal (solid ink), normal-band edges (dashed green), critical limits (dotted red), with 10% tinted zones for the band and the critical regions. The data line is ink, 2px; the end marker is coloured by the latest status and goes grey when data is stale.
+Inline SVG drawn from signals, stretched to its box with non-scaling strokes; text and the end marker are HTML so they stay readable. Reference lines: nominal (solid ink), normal-band edges (dashed green), critical limits (dotted red), with 10% tinted zones for the band and the critical regions. The data line is ink, 2px; the end marker is coloured by the latest status and goes grey when data is stale. The most recent status change is marked with a dotted vertical line and a label (new status and clock time). Controls that act on the chart, such as Trigger disturbance, sit in its header so cause and effect are visible together; reference labels that would collide with the nominal label are hidden (the line stays).
 
 ## Do's and Don'ts
 

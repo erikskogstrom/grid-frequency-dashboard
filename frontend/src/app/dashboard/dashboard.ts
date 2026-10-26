@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { DisturbanceButton } from '../disturbance/disturbance-button';
 import { FrequencyChart } from '../frequency-chart/frequency-chart';
 import { FrequencyGauge } from '../frequency-gauge/frequency-gauge';
 import { FrequencyStream } from '../frequency-stream';
@@ -7,7 +8,7 @@ import { Settings } from '../settings/settings';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [FrequencyGauge, FrequencyChart, History, Settings],
+  imports: [FrequencyGauge, FrequencyChart, DisturbanceButton, History, Settings],
   template: `
     <div class="mx-auto max-w-6xl px-4 py-6 sm:px-8 sm:py-8">
       <header class="flex flex-wrap items-start justify-between gap-x-8 gap-y-3">
@@ -39,7 +40,7 @@ import { Settings } from '../settings/settings';
         <app-frequency-gauge />
 
         @defer (on idle) {
-          <app-frequency-chart />
+          <app-frequency-chart><app-disturbance-button /></app-frequency-chart>
         } @placeholder {
           <div class="flex h-72 items-center justify-center text-sm text-muted">Loading chart…</div>
         }

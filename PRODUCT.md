@@ -1,5 +1,7 @@
 # Product: Grid Frequency Dashboard
 
+<!-- impeccable:product-schema 1 -->
+
 ## What it is
 A small real-time dashboard that shows the frequency of the Nordic power grid (synchronous area, nominal 50 Hz). The data is either simulated or a replay of real historical measurements from Fingrid. It is a demo project: a modern Angular frontend on top of a .NET backend that streams samples over SignalR.
 
@@ -52,6 +54,29 @@ Calm, precise and factual, like good control-room software. Short labels in plai
 - Angular 22 with Tailwind CSS, no component library
 - The chart is an inline SVG drawn from signals, no chart library
 - Single page, no auth
+- Replay of real Fingrid data is planned, not built. Only simulated data exists today, so the UI must only ever claim "Simulated".
 
 ## What good looks like
 A domain expert glancing at the screen can tell the current value, whether it is normal and which way it is heading. A developer opening the app sees a clean, credible tool, not a template.
+
+## Platform
+
+web
+
+## Positioning
+A small, readable modern Angular + .NET + SignalR codebase whose domain details (units, thresholds, terminology, status rules) hold up to an energy-sector expert. A generic real-time demo could not truthfully claim the domain credibility.
+
+## Operating Context
+- Imagined use: glanced at from a distance on a large second monitor in a balancing or control-room setting.
+- Actual use: a developer or technical lead runs it locally (`aspire run`, or backend and frontend separately) or reads the code.
+- Data today comes from the backend simulator (`backend/GridFrequency.Api/FrequencySimulator.cs`), pushed every 500 ms over SignalR; history is an in-memory buffer of about 15 minutes.
+
+## Evidence on Hand
+- A working simulator, API, SignalR hub and Angular app in this repository.
+- Absent, and not to be fabricated: any real Fingrid measurement data, any real operator or user feedback, any claim of operational use.
+
+## Product Principles
+- Never look operational: it is a demo, and the UI always shows its data source.
+- Quiet when normal: calm when everything is normal, louder only when something is wrong.
+- Honest about freshness: connection state and data source are always visible; stale or replayed data never looks live.
+- Domain precision over decoration: units, thresholds, decimals and terminology are exact.

@@ -7,11 +7,11 @@ describe('getFrequencyStatus', () => {
     expect(getFrequencyStatus(hz, thresholds)).toBe('normal');
   });
 
-  it.each([49.85, 50.15])('is outside the normal band at %f Hz', (hz) => {
+  it.each([49.85, 50.15, 49.6, 50.4])('is outside the normal band at %f Hz', (hz) => {
     expect(getFrequencyStatus(hz, thresholds)).toBe('outside');
   });
 
-  it.each([49.7, 49.6, 50.3, 50.5])('is critical at %f Hz', (hz) => {
+  it.each([49.5, 49.4, 50.5, 50.6])('is critical at %f Hz', (hz) => {
     expect(getFrequencyStatus(hz, thresholds)).toBe('critical');
   });
 
@@ -20,6 +20,6 @@ describe('getFrequencyStatus', () => {
   });
 
   it('critical wins over a wide alarm band', () => {
-    expect(getFrequencyStatus(49.6, { low: 49.0, high: 51.0 })).toBe('critical');
+    expect(getFrequencyStatus(49.4, { low: 49.0, high: 51.0 })).toBe('critical');
   });
 });

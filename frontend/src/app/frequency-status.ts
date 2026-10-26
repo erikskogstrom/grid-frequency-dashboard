@@ -1,8 +1,8 @@
 export const NOMINAL_HZ = 50;
 
 /** Fixed emergency limits. They win over the user's alarm thresholds. */
-export const CRITICAL_LOW_HZ = 49.7;
-export const CRITICAL_HIGH_HZ = 50.3;
+export const CRITICAL_LOW_HZ = 49.5;
+export const CRITICAL_HIGH_HZ = 50.5;
 
 export interface Thresholds {
   low: number;

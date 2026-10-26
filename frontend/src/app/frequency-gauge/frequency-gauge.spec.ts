@@ -40,7 +40,7 @@ describe('FrequencyGauge', () => {
     await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('Outside normal band');
 
-    stream.latest.set(sample(49.62));
+    stream.latest.set(sample(49.45));
     await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('Critical');
   });

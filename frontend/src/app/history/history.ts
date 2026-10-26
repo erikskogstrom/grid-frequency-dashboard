@@ -6,15 +6,15 @@ import { FrequencySample } from '../frequency-sample';
 @Component({
   selector: 'app-history',
   template: `
-    <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200" aria-labelledby="history-title">
+    <section aria-labelledby="history-title">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="history-title" class="text-sm font-medium text-slate-600">History</h2>
+        <h2 id="history-title" class="text-base font-semibold">History</h2>
 
-        <div role="group" aria-label="Time range" class="flex gap-1">
+        <div role="group" aria-label="Time range" class="flex gap-2">
           @for (option of options; track option) {
             <button
               type="button"
-              class="rounded-md px-3 py-1 text-sm font-medium ring-1 ring-slate-300 aria-pressed:bg-sky-700 aria-pressed:text-white aria-pressed:ring-sky-700"
+              class="btn btn-secondary h-9 px-3 aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-ink"
               [attr.aria-pressed]="minutes() === option"
               (click)="minutes.set(option)"
             >
@@ -24,24 +24,35 @@ import { FrequencySample } from '../frequency-sample';
         </div>
       </div>
 
-      <div class="mt-4" aria-live="polite">
+      <div class="mt-5 min-h-24" aria-live="polite">
         @if (history.isLoading()) {
-          <p class="text-sm text-slate-600">Loading history…</p>
+          <!-- Skeleton with the same shape as the result, so nothing jumps when data arrives. -->
+          <div class="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-5" aria-label="Loading history" role="status">
+            @for (n of [1, 2, 3, 4, 5]; track n) {
+              <div class="space-y-2">
+                <div class="h-3 w-16 rounded-xs bg-line motion-safe:animate-pulse"></div>
+                <div class="h-6 w-20 rounded-xs bg-line motion-safe:animate-pulse"></div>
+              </div>
+            }
+          </div>
         } @else if (history.error()) {
-          <p class="text-sm text-red-800">Could not load history.</p>
-          <button type="button" class="mt-2 rounded-md px-3 py-1 text-sm font-medium ring-1 ring-slate-300" (click)="history.reload()">
-            Try again
-          </button>
+          <div role="alert" class="flex flex-wrap items-center gap-3">
+            <p class="text-sm text-crit">Could not load history. Is the backend running?</p>
+            <button type="button" class="btn btn-secondary h-9 px-3" (click)="history.reload()">Try again</button>
+          </div>
         } @else if (stats(); as s) {
-          <dl class="grid grid-cols-2 gap-4 sm:grid-cols-5">
-            <div><dt class="text-xs text-slate-600">Samples</dt><dd class="text-lg font-semibold tabular-nums">{{ s.count }}</dd></div>
-            <div><dt class="text-xs text-slate-600">Min</dt><dd class="text-lg font-semibold tabular-nums">{{ s.min.toFixed(2) }} Hz</dd></div>
-            <div><dt class="text-xs text-slate-600">Max</dt><dd class="text-lg font-semibold tabular-nums">{{ s.max.toFixed(2) }} Hz</dd></div>
-            <div><dt class="text-xs text-slate-600">Mean</dt><dd class="text-lg font-semibold tabular-nums">{{ s.mean.toFixed(2) }} Hz</dd></div>
-            <div><dt class="text-xs text-slate-600">Outside band</dt><dd class="text-lg font-semibold tabular-nums">{{ s.outside }}</dd></div>
+          <dl class="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-5">
+            <div><dt class="text-sm text-muted">Samples</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.count }}</dd></div>
+            <div><dt class="text-sm text-muted">Min</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.min.toFixed(2) }} <span class="text-sm font-normal text-muted">Hz</span></dd></div>
+            <div><dt class="text-sm text-muted">Max</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.max.toFixed(2) }} <span class="text-sm font-normal text-muted">Hz</span></dd></div>
+            <div><dt class="text-sm text-muted">Mean</dt><dd class="mt-1 text-xl font-semibold tabular-nums">{{ s.mean.toFixed(2) }} <span class="text-sm font-normal text-muted">Hz</span></dd></div>
+            <div>
+              <dt class="text-sm text-muted">Outside band</dt>
+              <dd class="mt-1 text-xl font-semibold tabular-nums" [class.text-warn]="s.outside > 0">{{ s.outside }}</dd>
+            </div>
           </dl>
         } @else {
-          <p class="text-sm text-slate-600">No samples yet.</p>
+          <p class="text-sm text-muted">No samples in this range yet. The backend keeps up to 15 minutes, so give it a moment after a restart.</p>
         }
       </div>
     </section>

@@ -45,6 +45,14 @@ describe('FrequencyGauge', () => {
     expect(fixture.nativeElement.textContent).toContain('Critical');
   });
 
+  it('flags the value as stale when the connection is lost', async () => {
+    stream.latest.set(sample(50.01));
+    stream.status.set('disconnected');
+    const el = await render();
+    expect(el.textContent).toContain('50.01');
+    expect(el.textContent).toContain('No live data');
+  });
+
   it('uses the thresholds from AlarmSettings', async () => {
     stream.latest.set(sample(49.95));
     TestBed.inject(AlarmSettings).apply({ low: 49.98, high: 50.02 });

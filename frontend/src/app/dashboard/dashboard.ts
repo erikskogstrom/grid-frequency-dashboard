@@ -9,28 +9,47 @@ import { Settings } from '../settings/settings';
   selector: 'app-dashboard',
   imports: [FrequencyGauge, FrequencyChart, History, Settings],
   template: `
-    <div class="mx-auto max-w-5xl p-4 sm:p-8">
-      <header class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+    <div class="mx-auto max-w-6xl px-4 py-6 sm:px-8 sm:py-8">
+      <header class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
         <div>
-          <h1 class="text-2xl font-semibold text-slate-900">Nordic grid frequency</h1>
-          <p class="text-sm text-slate-600">Simulated data, nominal 50 Hz</p>
+          <h1 class="text-xl font-semibold">Nordic grid frequency</h1>
+          <p class="text-sm text-muted">Simulated data · nominal 50 Hz</p>
         </div>
-        <p role="status" class="text-sm text-slate-700">Connection: {{ connection() }}</p>
+
+        <p role="status" class="flex items-center gap-2 text-sm">
+          @switch (connection()) {
+            @case ('connected') {
+              <span class="size-2 rounded-full bg-ok" aria-hidden="true"></span> Live
+            }
+            @case ('connecting') {
+              <span class="size-2 rounded-full bg-warn motion-safe:animate-pulse" aria-hidden="true"></span> Connecting…
+            }
+            @case ('reconnecting') {
+              <span class="size-2 rounded-full bg-warn motion-safe:animate-pulse" aria-hidden="true"></span> Reconnecting…
+            }
+            @case ('disconnected') {
+              <span class="size-2 rounded-full bg-crit" aria-hidden="true"></span> Disconnected
+            }
+          }
+        </p>
       </header>
 
-      <main class="grid gap-4 lg:grid-cols-3">
-        <app-frequency-gauge />
+      <main class="mt-6 flex flex-col gap-8">
+        <!-- The one framed surface: the live readout and its chart belong together. -->
+        <div class="grid overflow-hidden rounded-xl border border-line bg-panel lg:grid-cols-[17rem_1fr]">
+          <app-frequency-gauge class="border-b border-line lg:border-r lg:border-b-0" />
 
-        <div class="lg:col-span-2">
           @defer (on idle) {
             <app-frequency-chart />
           } @placeholder {
-            <div class="h-72 rounded-xl bg-white p-6 text-sm text-slate-600 ring-1 ring-slate-200">Loading chart…</div>
+            <div class="flex min-h-80 items-center justify-center text-sm text-muted">Loading chart…</div>
           }
         </div>
 
-        <div class="lg:col-span-2"><app-history /></div>
-        <app-settings />
+        <div class="grid gap-8 lg:grid-cols-[1fr_24rem] lg:gap-12">
+          <app-history />
+          <app-settings />
+        </div>
       </main>
     </div>
   `,

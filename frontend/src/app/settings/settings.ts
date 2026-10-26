@@ -12,22 +12,23 @@ const RANGE_MAX = 51.0;
   selector: 'app-settings',
   imports: [FormField],
   template: `
-    <section class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200" aria-labelledby="settings-title">
-      <h2 id="settings-title" class="text-sm font-medium text-slate-600">Settings</h2>
+    <section aria-labelledby="settings-title">
+      <h2 id="settings-title" class="text-base font-semibold">Alarm limits</h2>
+      <p class="mt-1 text-sm text-muted">Frequency outside this band is flagged. Critical limits (49.70 / 50.30 Hz) are fixed.</p>
 
-      <form class="mt-4 grid gap-4 sm:grid-cols-2" (submit)="save($event)">
+      <form class="mt-5 grid grid-cols-2 gap-4" (submit)="save($event)">
         <div>
-          <label for="low" class="block text-sm font-medium text-slate-900">Low alarm (Hz)</label>
+          <label for="low" class="block text-sm font-medium">Low (Hz)</label>
           <input
             id="low"
             type="number"
             step="0.01"
-            class="mt-1 w-full rounded-md px-3 py-2 ring-1 ring-slate-400"
+            class="field mt-1.5"
             [formField]="thresholdsForm.low"
             [attr.aria-invalid]="thresholdsForm.low().invalid()"
             aria-describedby="low-errors"
           />
-          <ul id="low-errors" class="mt-1 text-sm text-red-800">
+          <ul id="low-errors" class="mt-1.5 text-sm text-crit">
             @if (thresholdsForm.low().touched()) {
               @for (error of thresholdsForm.low().errors(); track error.kind) {
                 <li>{{ error.message }}</li>
@@ -37,17 +38,17 @@ const RANGE_MAX = 51.0;
         </div>
 
         <div>
-          <label for="high" class="block text-sm font-medium text-slate-900">High alarm (Hz)</label>
+          <label for="high" class="block text-sm font-medium">High (Hz)</label>
           <input
             id="high"
             type="number"
             step="0.01"
-            class="mt-1 w-full rounded-md px-3 py-2 ring-1 ring-slate-400"
+            class="field mt-1.5"
             [formField]="thresholdsForm.high"
             [attr.aria-invalid]="thresholdsForm.high().invalid()"
             aria-describedby="high-errors"
           />
-          <ul id="high-errors" class="mt-1 text-sm text-red-800">
+          <ul id="high-errors" class="mt-1.5 text-sm text-crit">
             @if (thresholdsForm.high().touched()) {
               @for (error of thresholdsForm.high().errors(); track error.kind) {
                 <li>{{ error.message }}</li>
@@ -56,35 +57,27 @@ const RANGE_MAX = 51.0;
           </ul>
         </div>
 
-        <div class="flex items-center gap-3 sm:col-span-2">
-          <button
-            type="submit"
-            class="rounded-md bg-sky-700 px-4 py-2 text-sm font-medium text-white disabled:bg-slate-300 disabled:text-slate-700"
-            [disabled]="thresholdsForm().invalid()"
-          >
-            Apply thresholds
-          </button>
-          <p role="status" class="text-sm text-slate-600">{{ applied() ? 'Applied' : 'Not applied yet' }}</p>
+        <div class="col-span-2 flex flex-wrap items-center gap-3">
+          <button type="submit" class="btn btn-primary" [disabled]="thresholdsForm().invalid()">Apply limits</button>
+          <p role="status" class="text-sm text-muted">{{ applied() ? 'Limits applied' : 'Changes not applied yet' }}</p>
         </div>
       </form>
 
-      <hr class="my-6 border-slate-200" />
-
-      <p class="text-sm text-slate-600">Simulate a sudden loss of generation. The frequency drops towards 49.6 Hz and recovers within about 30 seconds.</p>
-      <button
-        type="button"
-        class="mt-3 rounded-md bg-red-800 px-4 py-2 text-sm font-medium text-white disabled:bg-slate-300 disabled:text-slate-700"
-        [disabled]="disturbance() === 'sending'"
-        (click)="triggerDisturbance()"
-      >
-        Trigger disturbance
-      </button>
-      <p role="status" class="mt-2 text-sm text-slate-600">
-        @switch (disturbance()) {
-          @case ('sent') { Disturbance triggered. }
-          @case ('error') { <span class="text-red-800">Could not reach the backend.</span> }
-        }
+      <h2 class="mt-10 text-base font-semibold">Simulation</h2>
+      <p class="mt-1 text-sm text-muted">
+        Cause a sudden loss of generation. The frequency falls towards 49.6 Hz, then recovers within about 30 seconds.
       </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <button type="button" class="btn btn-danger" [disabled]="disturbance() === 'sending'" (click)="triggerDisturbance()">
+          {{ disturbance() === 'sending' ? 'Triggering…' : 'Trigger disturbance' }}
+        </button>
+        <p role="status" class="text-sm">
+          @switch (disturbance()) {
+            @case ('sent') { <span class="text-muted">Disturbance triggered. Watch the chart.</span> }
+            @case ('error') { <span class="text-crit">Could not reach the backend. Is it running?</span> }
+          }
+        </p>
+      </div>
     </section>
   `,
 })

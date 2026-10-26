@@ -16,7 +16,7 @@ public class FrequencySimulator(Random? random = null)
     private const double Sigma = 0.0134;
 
     // Disturbance profile: fast fall to the nadir, then a linear recovery.
-    private const double DisturbanceDepthHz = 0.4; // nadir is about 49.6 Hz
+    private const double DisturbanceDepthHz = 0.6; // nadir is about 49.4 Hz, below the 49.5 Hz critical limit
     private const double FallSeconds = 3;
     private const double RecoverySeconds = 25;     // 28 s in total
 

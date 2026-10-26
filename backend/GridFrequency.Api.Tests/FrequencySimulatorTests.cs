@@ -25,7 +25,7 @@ public class FrequencySimulatorTests
     }
 
     [Fact]
-    public void Disturbance_dips_towards_49_6_and_recovers()
+    public void Disturbance_dips_towards_49_4_and_recovers()
     {
         var simulator = CreateSimulator();
         Run(simulator, 20); // let the random walk settle first
@@ -34,7 +34,7 @@ public class FrequencySimulatorTests
         var during = Run(simulator, 60); // 30 s, longer than the 28 s disturbance
         var after = Run(simulator, 60);
 
-        Assert.InRange(during.Min(), 49.5, 49.7);
+        Assert.InRange(during.Min(), 49.3, 49.5);
         Assert.All(after.TakeLast(20), hz => Assert.InRange(hz, 49.8, 50.2));
     }
 
